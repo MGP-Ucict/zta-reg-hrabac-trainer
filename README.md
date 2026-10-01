@@ -4,9 +4,8 @@ This repository contains the empirical validation framework and source code for 
 
 ---
 
-## 📊 System Architecture & Performance Visuals
-
-🔗 **[View Benchmarks result (image.png)](image.png)**
+## 📊 Performance Visuals
+![ZTA-Reg-HRABAC System Benchmarks Result](image.png)
 
 ---
 
