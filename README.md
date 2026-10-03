@@ -26,7 +26,7 @@ pip install numpy scikit-learn joblib
 - **`trainer.py`**: Manages asset ingestion telemetry and trains the Isolation Forest core.
 - **`benchmarks.py`**: Houses PDP simulation logic and evaluates Z-score penalty weights.
 - **`image.png`**: The benchmarks result.
-- **`trainer_saved.py`**: Saving the learninh model into .pkl file.
+- **`trainer_saved.py`**: Saving the learning model into a .pkl file.
 - **`ablation.py`**: Ablation analysis.
 - **`image_abl.png`**: The ablation analysis result.
 
