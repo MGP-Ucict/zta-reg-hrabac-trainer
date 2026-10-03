@@ -93,7 +93,7 @@ print("\n[CRITICAL STRUCTURAL CONCLUSION PER NIS 2 DIRECTIVE MANDATES]:")
 print("Setting a non-zero decay parameter (λ > 0) causes historical anomaly risk scores")
 print("to degrade rapidly between disparate actions. Sophisticated adversaries (APTs)")
 print("successfully evade detection by operating just outside the active sliding window,")
-print("causing the False Negative Rate (FNR) to escalate above the critical 12.4% threshold.")
+print("causing the False Negative Rate (FNR) to escalate above the critical 38.9% threshold.")
 print("To lock perimeter leakage to exactly 0.00% FNR, elasticity decay must be locked to λ = 0.")
 print("=" * 70)
 
