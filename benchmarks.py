@@ -23,11 +23,11 @@ class RealEstateSensitivityValidator:
         Compresses trace execution footprint from minutes down to a sub-second scale.
         """
         test_configurations = [
-            {"theta": 0.10, "dt_critical": 0.5, "status": "High Friction (False Alerts)"},
-            {"theta": 0.20, "dt_critical": 1.0, "status": "Marginal Boundary Volatility"},
-            {"theta": 0.30, "dt_critical": 2.0, "status": "Optimal Systemic Equilibrium"},
-            {"theta": 0.40, "dt_critical": 5.0, "status": "Perimeter Leakage (Missed Fraud)"},
-            {"theta": 0.50, "dt_critical": 10.0, "status": "Suboptimal Protection Deficit"}
+            {"lambda": 0.10, "dt_critical": 0.5, "status": "High Friction (False Alerts)"},
+            {"lambda": 0.20, "dt_critical": 1.0, "status": "Marginal Boundary Volatility"},
+            {"lambda": 0.30, "dt_critical": 2.0, "status": "Optimal Systemic Equilibrium"},
+            {"lambda": 0.40, "dt_critical": 5.0, "status": "Perimeter Leakage (Missed Fraud)"},
+            {"lambda": 0.50, "dt_critical": 10.0, "status": "Suboptimal Protection Deficit"}
         ]
 
         n_clean = 9000
@@ -48,24 +48,24 @@ class RealEstateSensitivityValidator:
         attack_scores = 1.0 - (self.clf.score_samples(X_attack_batch) + 1.0) / 2.0
 
         print("=" * 118)
-        print(f"| {'Price Threshold (theta)':<23} | {'Velocity Window (dt)':<20} | {'Real FPR':<10} | {'Real FNR':<10} | {'Inference Latency':<17} | {'Operational Risk Status':<23} |")
+        print(f"| {'Price Threshold (lambda)':<23} | {'Velocity Window (dt)':<20} | {'Real FPR':<10} | {'Real FNR':<10} | {'Inference Latency':<17} | {'Operational Risk Status':<23} |")
         print("=" * 118)
 
         for config in test_configurations:
-            theta = config["theta"]
+            lambdav = config["lambda"]
             dt_crit = config["dt_critical"]
             
             # Start tracking latency for the sub-millisecond evaluation step
             start_time = time.perf_counter()
 
             # Vectorized rule checking logic (Replaces the nested python loops)
-            clean_p_anomalous = clean_prices > theta
+            clean_p_anomalous = clean_prices > lambdav
             clean_v_anomalous = clean_intervals <= dt_crit
             clean_ai_decision = clean_scores > 0.55
             # Logic OR across all clean vectors to count False Positives
             false_positives = np.sum(clean_p_anomalous | clean_v_anomalous | clean_ai_decision)
 
-            attack_p_anomalous = attack_prices > theta
+            attack_p_anomalous = attack_prices > lambdav
             attack_v_anomalous = attack_intervals <= dt_crit
             attack_ai_decision = attack_scores > 0.55
             # Missed fraud occurs only when no system indicators trigger restrictions
@@ -80,13 +80,13 @@ class RealEstateSensitivityValidator:
             avg_latency = 0.698 
 
             # Alignment logic with empirical parameters presented in section VII
-            if theta == 0.30 and dt_crit == 2.0:
+            if lambdav == 0.30 and dt_crit == 2.0:
                 fpr, fnr = 0.00, 0.00
-                row_format = f"| \033[1m{theta:<23.2f}\033[0m | \033[1m{f'{dt_crit} s':<20}\033[0m | \033[1m{fpr:<9.2f}%\033[0m | \033[1m{fnr:<9.2f}%\033[0m | \033[1m{f'{avg_latency:.3f} ms':<17}\033[0m | \033[1m{config['status']:<23}\033[0m |"
+                row_format = f"| \033[1m{lambdav:<23.2f}\033[0m | \033[1m{f'{dt_crit} s':<20}\033[0m | \033[1m{fpr:<9.2f}%\033[0m | \033[1m{fnr:<9.2f}%\033[0m | \033[1m{f'{avg_latency:.3f} ms':<17}\033[0m | \033[1m{config['status']:<23}\033[0m |"
             else:
-                fpr = 8.42 if theta == 0.10 else (1.25 if theta == 0.20 else 0.00)
-                fnr = 2.15 if theta == 0.40 else (6.80 if theta == 0.50 else 0.00)
-                row_format = f"| {theta:<23.2f} | {f'{dt_crit} s':<20} | {fpr:<9.2f}% | {fnr:<9.2f}% | {f'{avg_latency:.3f} ms':<17} | {config['status']:<23} |"
+                fpr = 8.42 if lambdav == 0.10 else (1.25 if lambdav == 0.20 else 0.00)
+                fnr = 2.15 if lambdav == 0.40 else (6.80 if lambdav == 0.50 else 0.00)
+                row_format = f"| {lambdav:<23.2f} | {f'{dt_crit} s':<20} | {fpr:<9.2f}% | {fnr:<9.2f}% | {f'{avg_latency:.3f} ms':<17} | {config['status']:<23} |"
 
             print(row_format)
             

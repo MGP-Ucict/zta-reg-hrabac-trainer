@@ -29,17 +29,17 @@ else:
 iso_forest.fit(X_train)
 
 # 3. Trust Evaluating Function (TEF) Architecture & Mathematical Modules
-def calculate_velocity_penalty(dt_window, lambda_param):
+def calculate_velocity_penalty(dt_window, theta_param):
     """
     Computes the dynamic object velocity penalty V(o) using exponential decay.
     """
     if dt_window <= DT_CRITICAL:
-        # Enforces the mathematical formula from Chapter 3.1: V(o) = V_ceiling * exp(-lambda * dt_window)
-        v_o = V_CEILING * np.exp(-lambda_param * dt_window)
+        # Enforces the mathematical formula from Chapter 3.1: V(o) = V_ceiling * exp(-theta * dt_window)
+        v_o = V_CEILING * np.exp(-theta_param * dt_window)
         return int(min(V_CEILING, v_o))
     return 0
 
-def evaluate_trust_score(price_dev, dt_window, lambda_param):
+def evaluate_trust_score(price_dev, dt_window, theta_param):
     """
     Dual-Perspective Context-Aware Trust Evaluating Function (TEF).
     """
@@ -50,7 +50,7 @@ def evaluate_trust_score(price_dev, dt_window, lambda_param):
     if is_anomaly and price_dev > THETA_PRICE:
         eval_price = 40  
         
-    eval_velocity = calculate_velocity_penalty(dt_window, lambda_param)
+    eval_velocity = calculate_velocity_penalty(dt_window, theta_param)
     
     t_current = max(0, T_INIT - eval_price - eval_velocity)
     return t_current
@@ -63,21 +63,21 @@ apt_price_deviations = np.random.uniform(low=0.35, high=0.60, size=num_apt_attac
 np.random.seed(44)
 apt_intervals = 0.5 + np.random.beta(a=1.5, b=2.5, size=num_apt_attacks) * 1.45
 
-# FIXED MATRIX: Added fine-grained lambda steps (0.2, 0.3) to capture the gradual degradation and the 38.9% threshold
-lambda_variants = [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0]
+# FIXED MATRIX: Added fine-grained theta steps (0.2, 0.3) to capture the gradual degradation and the 38.9% threshold
+theta_variants = [0.0, 0.1, 0.2, 0.3, 0.5, 1.0, 2.0]
 fnr_results = []
 
 print(f"\n[INFO] Initializing ablation sensitivity tracing over {num_apt_attacks} APT inputs...")
 print("-" * 70)
-print(f"{'Lambda (λ)':<15}{'Intercepted':<20}{'Missed (FN)':<20}{'FNR (%)':<10}")
+print(f"{'theta (θ)':<15}{'Intercepted':<20}{'Missed (FN)':<20}{'FNR (%)':<10}")
 print("-" * 70)
 
-for lmbda in lambda_variants:
+for lmbda in theta_variants:
     false_negatives = 0
     detected = 0
     
     for i in range(num_apt_attacks):
-        t_score = evaluate_trust_score(apt_price_deviations[i], apt_intervals[i], lambda_param=lmbda)
+        t_score = evaluate_trust_score(apt_price_deviations[i], apt_intervals[i], theta_param=lmbda)
         
         if t_score <= T_TOLERANCE:
             detected += 1
@@ -90,25 +90,25 @@ for lmbda in lambda_variants:
 
 print("-" * 70)
 print("\n[CRITICAL STRUCTURAL CONCLUSION PER NIS 2 DIRECTIVE MANDATES]:")
-print("Setting a non-zero decay parameter (λ > 0) causes historical anomaly risk scores")
+print("Setting a non-zero decay parameter (θ > 0) causes historical anomaly risk scores")
 print("to degrade rapidly between disparate actions. Sophisticated adversaries (APTs)")
 print("successfully evade detection by operating just outside the active sliding window,")
 print("causing the False Negative Rate (FNR) to escalate above the critical 38.9% threshold.")
-print("To lock perimeter leakage to exactly 0.00% FNR, elasticity decay must be locked to λ = 0.")
+print("To lock perimeter leakage to exactly 0.00% FNR, elasticity decay must be locked to θ = 0.")
 print("=" * 70)
 
 # 5. Automated System Benchmarks Visualization & Image Export
 print("\n[INFO] Exporting performance visualization to image.png...")
 plt.figure(figsize=(8, 5))
 
-plt.plot(lambda_variants, fnr_results, marker='o', linestyle='-', color='#d32f2f', linewidth=2, label='Measured FNR (%)')
+plt.plot(theta_variants, fnr_results, marker='o', linestyle='-', color='#d32f2f', linewidth=2, label='Measured FNR (%)')
 plt.axhline(y=12.4, color='#f57c00', linestyle='--', linewidth=1.5, label='Critical Paper Threshold (12.4%)')
 plt.axhline(y=0.0, color='#388e3c', linestyle=':', linewidth=1.5, label='Optimal Equilibrium (0.00%)')
 
-plt.title(r'ZTA-Reg-HRABAC Ablation Analysis: Lambda ($\lambda$) vs. False Negative Rate', fontsize=12, fontweight='bold', pad=15)
-plt.xlabel(r'Network Elasticity Decay Coefficient ($\lambda$)', fontsize=10, labelpad=10)
+plt.title(r'ZTA-Reg-HRABAC Ablation Analysis: theta ($\theta$) vs. False Negative Rate', fontsize=12, fontweight='bold', pad=15)
+plt.xlabel(r'Network Elasticity Decay Coefficient ($\theta$)', fontsize=10, labelpad=10)
 plt.ylabel('False Negative Rate (FNR %)', fontsize=10, labelpad=10)
-plt.xticks(lambda_variants)
+plt.xticks(theta_variants)
 plt.grid(True, linestyle=':', alpha=0.6)
 plt.legend(loc='lower right', frameon=True, shadow=False)
 plt.tight_layout()
