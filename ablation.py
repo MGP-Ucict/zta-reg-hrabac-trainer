@@ -72,12 +72,12 @@ print("-" * 70)
 print(f"{'theta (θ)':<15}{'Intercepted':<20}{'Missed (FN)':<20}{'FNR (%)':<10}")
 print("-" * 70)
 
-for lmbda in theta_variants:
+for theta in theta_variants:
     false_negatives = 0
     detected = 0
     
     for i in range(num_apt_attacks):
-        t_score = evaluate_trust_score(apt_price_deviations[i], apt_intervals[i], theta_param=lmbda)
+        t_score = evaluate_trust_score(apt_price_deviations[i], apt_intervals[i], theta_param=theta)
         
         if t_score <= T_TOLERANCE:
             detected += 1
@@ -86,12 +86,12 @@ for lmbda in theta_variants:
             
     fnr_percentage = (false_negatives / num_apt_attacks) * 100
     fnr_results.append(fnr_percentage)
-    print(f"{lmbda:<15.1f}{detected:<20}{false_negatives:<20}{fnr_percentage:<10.2f}%")
+    print(f"{theta:<15.1f}{detected:<20}{false_negatives:<20}{fnr_percentage:<10.2f}%")
 
 print("-" * 70)
 print("\n[CRITICAL STRUCTURAL CONCLUSION PER NIS 2 DIRECTIVE MANDATES]:")
 print("Setting a non-zero decay parameter (θ > 0) causes historical anomaly risk scores")
-print("to degrade rapidly between disparate actions. Sophisticated adversaries (APTs)")
+print("to degrade rapidly between actions. Sophisticated adversaries (APTs)")
 print("successfully evade detection by operating just outside the active sliding window,")
 print("causing the False Negative Rate (FNR) to escalate above the critical 38.9% threshold.")
 print("To lock perimeter leakage to exactly 0.00% FNR, elasticity decay must be locked to θ = 0.")

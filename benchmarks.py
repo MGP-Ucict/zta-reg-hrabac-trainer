@@ -23,11 +23,11 @@ class RealEstateSensitivityValidator:
         Compresses trace execution footprint from minutes down to a sub-second scale.
         """
         test_configurations = [
-            {"lambda": 0.10, "dt_critical": 0.5, "status": "High Friction (False Alerts)"},
-            {"lambda": 0.20, "dt_critical": 1.0, "status": "Marginal Boundary Volatility"},
-            {"lambda": 0.30, "dt_critical": 2.0, "status": "Optimal Systemic Equilibrium"},
-            {"lambda": 0.40, "dt_critical": 5.0, "status": "Perimeter Leakage (Missed Fraud)"},
-            {"lambda": 0.50, "dt_critical": 10.0, "status": "Suboptimal Protection Deficit"}
+            {"lambdav": 0.10, "dt_critical": 0.5, "status": "High Friction (False Alerts)"},
+            {"lambdav": 0.20, "dt_critical": 1.0, "status": "Marginal Boundary Volatility"},
+            {"lambdav": 0.30, "dt_critical": 2.0, "status": "Optimal Systemic Equilibrium"},
+            {"lambdav": 0.40, "dt_critical": 5.0, "status": "Perimeter Leakage (Missed Fraud)"},
+            {"lambdav": 0.50, "dt_critical": 10.0, "status": "Suboptimal Protection Deficit"}
         ]
 
         n_clean = 9000
@@ -52,7 +52,7 @@ class RealEstateSensitivityValidator:
         print("=" * 118)
 
         for config in test_configurations:
-            lambdav = config["lambda"]
+            lambdav = config["lambdav"]
             dt_crit = config["dt_critical"]
             
             # Start tracking latency for the sub-millisecond evaluation step
